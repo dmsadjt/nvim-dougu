@@ -1,3 +1,4 @@
+vim.g.python3_host_prog = "C:/Users/lanovo/AppData/Local/Programs/Python/Python39/python.exe"
 require("config.lazy")
 
 -- Always split to the right
