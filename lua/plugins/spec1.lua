@@ -40,18 +40,39 @@ return {
         on_attach = on_attach,
       }
 
+      vim.lsp.config["gopls"] = {
+          cmd = { "gopls" }, -- Assumes 'gopls' is in your system's PATH
+          filetypes = { "go", "gomod", "gowork", "gotmpl" },
+          root_markers = { "go.work", "go.mod", ".git" },
+          capabilities = capabilities,
+          on_attach = on_attach,
+          -- Optional: Add settings for better Go development
+          settings = {
+            gopls = {
+              completeUnimported = true,
+              staticcheck = true,
+              gofumpt = true,
+              -- Set build tags if needed, e.g., analyses = { unusedparams = true }
+            },
+          },
+      }
+
       -- Auto-enable servers for relevant filetypes
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "python", "typescript", "typescriptreact", "javascript", "javascriptreact" },
-        callback = function(args)
-          local ft = args.match
-          if ft == "python" then
-            vim.lsp.start(vim.lsp.config["pyright"])
-          elseif ft:match("typescript") or ft:match("javascript") then
-            vim.lsp.start(vim.lsp.config["ts_ls"])
-          end
-        end,
-      })
+        vim.api.nvim_create_autocmd("FileType", {
+          pattern = { "python", "typescript", "typescriptreact", "javascript", "javascriptreact", "go", "gomod", "gowork" }, -- ADD GO FILETYPES
+          callback = function(args)
+            local ft = args.match
+            if ft == "python" then
+              vim.lsp.start(vim.lsp.config["pyright"])
+            elseif ft:match("typescript") or ft:match("javascript") then
+              vim.lsp.start(vim.lsp.config["ts_ls"])
+            -- Add the check for Go
+            elseif ft:match("go") or ft:match("gomod") or ft:match("gowork") then
+              vim.lsp.start(vim.lsp.config["gopls"])
+            end
+          end,
+        })
+
     end,
   },
 
